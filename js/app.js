@@ -1,12 +1,16 @@
 'use strict'
 
 var imgArray = [];
+var imgNames = [];
+var imgShown = [];
+var imgVotes = [];
 var attempts = 25;
 var userAttempts = 0;
 
 var firstImageIndex;
 var secondImageIndex;
 var  thirdImageIndex;
+var indices=[firstImageIndex,secondImageIndex,thirdImageIndex];
 var container  = document.getElementById('images');
 
 var firstImg = document.createElement('img');
@@ -21,10 +25,11 @@ var secondImgTitle = document.createElement('h1');
 var thirdImgTitle = document.createElement('h1');
 
 
-var resultList = document.getElementById('resultList');
+// var resultList = document.getElementById('resultList');
 var form = document.getElementById('form');
 var button = document.getElementById('resultButton');
 
+var ctx = document.getElementById('myChart').getContext('2d');
 
 //creating the constructor 
 function Product(imgName) {
@@ -33,6 +38,10 @@ function Product(imgName) {
     this.shown = 0;
     this.vote = 0;
     imgArray.push(this);
+    imgNames.push(this.name);
+    imgShown.push(this.shown);
+    imgVotes.push(this.vote);
+
 }
 
 new Product('bag');
@@ -92,13 +101,15 @@ function userClick(event) {
     }
 }
 
+//rendering the chart instead of list 
 function result() {
-    var results;
-    for (var i = 0; i < imgArray.length; i++) {
-        results = document.createElement('li');
-        results.textContent = imgArray[i].name.toUpperCase() + ' got ' + imgArray[i].vote + ' votes out of ' + imgArray[i].shown + ' times it was displayed.';
-        resultList.appendChild(results);
-    }
+    renderChart();
+    // var results;
+    // for (var i = 0; i < imgArray.length; i++) {
+    //     results = document.createElement('li');
+    //     results.textContent = imgArray[i].name.toUpperCase() + ' got ' + imgArray[i].vote + ' votes out of ' + imgArray[i].shown + ' times it was displayed.';
+    //     resultList.appendChild(results);
+    // }
 }
 
 function ThreeRandom() {
@@ -110,6 +121,11 @@ function ThreeRandom() {
     imgArray[firstImageIndex].shown++
     imgArray[secondImageIndex].shown++
     imgArray[thirdImageIndex].shown++
+
+    for (var i = 0; i < imgArray.length; i++) {
+        imgShown[i] = imgArray[i].shown;
+    }
+    indices = [firstImageIndex, secondImageIndex, thirdImageIndex];
 }
 
 function render() {
@@ -129,4 +145,34 @@ function render() {
 
 function randomIndex() {
     return Math.floor(Math.random() * imgArray.length);
+}
+
+function renderChart() {
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: imgNames,
+            datasets: [
+                {
+                    label: "seen",
+                    backgroundColor: "yellow",
+                    data: imgShown
+                }, {
+                    label: "Voted",
+                    backgroundColor: "red",
+                    data: imgVotes
+                }
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Voted Results',
+                position: 'bottom',
+            },
+            data: {
+                precision: 0
+            }
+        }
+    });
 }

@@ -17,16 +17,16 @@ img{
 
 .allPic{
     text-align: center;
-    display: block;
-    border-bottom: black;
-    margin:15px;
+    display: inline-block;
+    margin:12px;
 }
 
 
 h1{
+    text-align: center;
     margin: 10px 80px;
     padding: 15px;
-    width: 150px;
+    width: 190px;
     display: inline-block;
     background-color: chocolate;
 
