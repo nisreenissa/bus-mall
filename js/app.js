@@ -5,29 +5,35 @@ var attempts = 25;
 var userAttempts = 0;
 
 var firstImageIndex;
-var SecondImageIndex;
-var thirdImgIndex;
-var container = document.getElementById('images');
-var firstImage = document.createElement('img');
-firstImage.id = 'firstImage';
-var SecondImage = document.createElement('img');
-SecondImage.id = 'SecondImage';
+var secondImageIndex;
+var  thirdImageIndex;
+var container  = document.getElementById('images');
+
+var firstImg = document.createElement('img');
+firstImg.id = 'firstImg';
+var secondImg = document.createElement('img');
+secondImg.id = 'secondImg';
 var thirdImg = document.createElement('img');
 thirdImg.id = 'thirdImg';
+
+var firstImgTitle = document.createElement('h1');
+var secondImgTitle = document.createElement('h1');
+var thirdImgTitle = document.createElement('h1');
+
+
 var resultList = document.getElementById('resultList');
 var form = document.getElementById('form');
+var button = document.getElementById('resultButton');
 
 
-// creating th constructor
+//creating the constructor 
 function Product(imgName) {
     this.name = imgName;
-    this.src = '../img/' + imgName + '.jpg';
+    this.src = 'img/' + imgName + '.jpg';
     this.shown = 0;
     this.vote = 0;
     imgArray.push(this);
 }
-
-
 
 new Product('bag');
 new Product('banana');
@@ -50,71 +56,76 @@ new Product('usb');
 new Product('water-can');
 new Product('wine-glass');
 
-
 ThreeRandom();
 render();
 
-form = addEventListener('submit', submitted);
-container.addEventListener('click', userClick);
+form.addEventListener('submit', submitter);
+container .addEventListener('click', userClick);
+button.addEventListener('click', result, { once: true });
 
-function submitted(event) {
-    console.log(event.target.userAttempts.value);
+function submitter(event) {
     event.preventDefault();
     userAttempts = event.target.userAttempts.value;
-    console.log(document.getElementById('userAttempts'));
     attempts = userAttempts;
 }
 
 function userClick(event) {
     attempts--;
     if (attempts > 0) {
-        if (event.target.id === firstImage.id) {
+        ThreeRandom();
+        if (event.target.id === firstImg.id) {
             imgArray[firstImageIndex].vote++;
-            ThreeRandom();
             render();
-        } else if (event.target.id === SecondImage.id) {
-            imgArray[SecondImageIndex].vote++;
-            ThreeRandom();
+        } else if (event.target.id === secondImg.id) {
+            imgArray[secondImageIndex].vote++;
             render();
         } else if (event.target.id === thirdImg.id) {
-            imgArray[thirdImgIndex].vote++;
-            ThreeRandom();
+            imgArray[thirdImageIndex].vote++;
             render();
         }
         else {
             attempts++;
         }
     } else {
-        var results;
-        for (var i = 0; i < imgArray.length; i++) {
-            results = document.createElement('li');
-            results.textContent = imgArray[i].name + ' got ' + imgArray[i].vote + ' votes.' + 'And was shown ' + imgArray[i].shown + ' times.';
-            resultList.appendChild(results);
-        }
-        container.removeEventListener('click', userClick);
+        container .removeEventListener('click', userClick);
+        button.removeAttribute('disabled');
+    }
+}
+
+function result() {
+    var results;
+    for (var i = 0; i < imgArray.length; i++) {
+        results = document.createElement('li');
+        results.textContent = imgArray[i].name.toUpperCase() + ' got ' + imgArray[i].vote + ' votes out of ' + imgArray[i].shown + ' times it was displayed.';
+        resultList.appendChild(results);
     }
 }
 
 function ThreeRandom() {
     firstImageIndex = randomIndex();
     do {
-        SecondImageIndex = randomIndex();
-        thirdImgIndex = randomIndex();
-    } while (firstImageIndex === SecondImageIndex || firstImageIndex === thirdImgIndex || SecondImageIndex === thirdImgIndex)
+        secondImageIndex = randomIndex();
+        thirdImageIndex = randomIndex();
+    } while (firstImageIndex === secondImageIndex || firstImageIndex === thirdImageIndex || secondImageIndex === thirdImageIndex)
     imgArray[firstImageIndex].shown++
-    imgArray[SecondImageIndex].shown++
-    imgArray[thirdImgIndex].shown++
+    imgArray[secondImageIndex].shown++
+    imgArray[thirdImageIndex].shown++
 }
 
 function render() {
-    firstImage.src = imgArray[firstImageIndex].src;
-    container.appendChild(firstImage);
-    SecondImage.src = imgArray[SecondImageIndex].src;
-    container.appendChild(SecondImage);
-    thirdImg.src = imgArray[thirdImgIndex].src;
-    container.appendChild(thirdImg);
+    firstImgTitle.textContent = imgArray[firstImageIndex].name;
+    container .appendChild(firstImgTitle);
+    secondImgTitle.textContent = imgArray[secondImageIndex].name;
+    container .appendChild(secondImgTitle);
+    thirdImgTitle.textContent = imgArray[thirdImageIndex].name;
+    container .appendChild(thirdImgTitle);
+    firstImg.src = imgArray[firstImageIndex].src;
+    container .appendChild(firstImg);
+    secondImg.src = imgArray[secondImageIndex].src;
+    container .appendChild(secondImg);
+    thirdImg.src = imgArray[thirdImageIndex].src;
+    container .appendChild(thirdImg);
 }
-
 
 function randomIndex() {
     return Math.floor(Math.random() * imgArray.length);
